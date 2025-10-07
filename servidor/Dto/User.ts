@@ -1,8 +1,7 @@
-export class items {
+export class user {
 
     constructor(
       public nombre?: string,
-      public precio?: number,
-      public stock?: number,
+      public password?: string
     ) {}
 }

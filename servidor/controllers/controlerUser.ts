@@ -1,20 +1,24 @@
 import { Request, Response } from "express";
 import dotenv from "dotenv";
-import { items } from "../Dto/User";
-import productos from "../repositories/repoProductos";
+import { user } from "../Dto/User";
+import productos from "../repositories/repoUsuarios";
+import usuarioServi from "../servise/usuarioServi";
 
 dotenv.config();
 
 class metodosProductos {
 
-  static async createProduct(req: Request, res: Response) {
-    const { nombre, precio, stock } = req.body;
-    try {    
-      const result = await productos.createProduct(new items(nombre, precio, stock));
+  static async register(req: Request, res: Response) {
+    const { usuario,password} = req.body;
+    try {
+
+      const registerUser = await usuarioServi.registerUsuario(
+        new user (usuario,password )
+      );
 
       res.status(200).json({
         message: "Producto creado correctamente",
-        result
+        registerUser
       });
     } catch (error) {
       res.status(500).json({
@@ -24,12 +28,30 @@ class metodosProductos {
     }
   }
 
-  static async ventas(req: Request, res: Response) {
+  static async usuarios(req: Request, res: Response) {
     try {
-      const result = await productos.ventasTotales();
+      const result = await productos.usuario();
 
       res.status(200).json({
-        message: `Ventas totales obtenidas corresonde a ${result[0].totalVentas}`,
+        message: `usuarios del sistema ${result[0]}`,
+      });}
+    catch (error) {
+      res.status(500).json({
+        message: "Error en el sistema",
+        error
+      });
+    }
+  }
+
+  static async login(req: Request, res: Response) {
+
+    const { usuario,password} = req.body;
+
+    try {
+      const result = await usuarioServi.login(usuario,password);
+
+      res.status(200).json({
+        message: `Ventas totales obtenidas corresonde a ${result}`,
       });}
     catch (error) {
       res.status(500).json({
@@ -38,7 +60,6 @@ class metodosProductos {
       });
     }
   }
-
 }
 
 export default metodosProductos;
